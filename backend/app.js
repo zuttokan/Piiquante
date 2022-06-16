@@ -1,21 +1,21 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const app = express();
-const sauce = require("./models/sauce");
-const stuffRoutes = require("./routes/stuff");
+const bodyParser = require("body-parser");
+//const sauce = require("./models/sauce");
+const saucesRoutes = require("./routes/sauces");
 const userRoutes = require("./routes/user");
 const path = require("path");
+const cors = require("cors");
+const app = express();
+
 // connexion to mongoDB
 mongoose
   .connect(
-    "mongodb+srv://Formation:<Design2023>@cluster0.0yrandd.mongodb.net/?retryWrites=true&w=majority",
+    "mongodb+srv://Piiquante:FormationOP@cluster0.b4fqnrs.mongodb.net/?retryWrites=true&w=majority",
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
-  .catch(() => console.log("Connexion à MongoDB échouée !"));
-
-app.use("/api/stuff", stuffRoutes);
-app.use("/api/auth", userRoutes);
+  .catch((e) => console.log("Connexion à MongoDB échouée !", e));
 
 // CORS in the header
 app.use((req, res, next) => {
@@ -31,11 +31,13 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json());
 app.use(bodyParser.json());
 
-app.use("/images", express.static(path.join(__dirname, "images")));
+app.use(express.json());
+app.use(cors());
 
-app.use("/api/stuff, stuffRoutes");
+app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/api/sauces", saucesRoutes);
+app.use("/api/auth", userRoutes);
 
 module.exports = app;
