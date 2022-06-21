@@ -1,6 +1,9 @@
+// call the model Sauce
 const Sauce = require("../models/sauce");
+// fs, for modify the file system, including the functions to delete
 const fs = require("fs");
 
+// Add a sauce
 exports.createSauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce);
   delete sauceObject._id;
@@ -16,6 +19,7 @@ exports.createSauce = (req, res, next) => {
     .catch((error) => res.status(400).json({ error }));
 };
 
+// accesses a sauce
 exports.getOneSauce = (req, res, next) => {
   Sauce.findOne({
     _id: req.params.id,
@@ -30,6 +34,7 @@ exports.getOneSauce = (req, res, next) => {
     });
 };
 
+// Modify a sauce
 exports.modifySauce = (req, res, next) => {
   const sauceObject = req.file
     ? {
@@ -47,6 +52,7 @@ exports.modifySauce = (req, res, next) => {
     .catch((error) => res.status(400).json({ error }));
 };
 
+// remove a sauce
 exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
@@ -60,6 +66,7 @@ exports.deleteSauce = (req, res, next) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
+// accesses all sauces
 exports.getAllSauces = (req, res, next) => {
   Sauce.find()
     .then((sauces) => {
@@ -72,11 +79,11 @@ exports.getAllSauces = (req, res, next) => {
     });
 };
 
-//like et dislike
+//like and dislike
 exports.likeSauce = (req, res, next) => {
   const like = req.body.like;
   if (like === 1) {
-    // bouton j'aime
+    // button like
     Sauce.updateOne(
       { _id: req.params.id },
       {
@@ -88,7 +95,7 @@ exports.likeSauce = (req, res, next) => {
       .then(() => res.status(200).json({ message: "Vous aimez cette sauce" }))
       .catch((error) => res.status(400).json({ error }));
   } else if (like === -1) {
-    // bouton je n'aime pas
+    // button dislike
     Sauce.updateOne(
       { _id: req.params.id },
       {
@@ -102,7 +109,7 @@ exports.likeSauce = (req, res, next) => {
       )
       .catch((error) => res.status(400).json({ error }));
   } else {
-    // annulation du bouton j'aime ou alors je n'aime pas
+    // cancel the button like or dislike
     Sauce.findOne({ _id: req.params.id })
       .then((sauce) => {
         if (sauce.usersLiked.indexOf(req.body.userId) !== -1) {
@@ -128,11 +135,9 @@ exports.likeSauce = (req, res, next) => {
             }
           )
             .then(() =>
-              res
-                .status(200)
-                .json({
-                  message: "Vous aimerez peut-être cette sauce à nouveau",
-                })
+              res.status(200).json({
+                message: "Vous aimerez peut-être cette sauce à nouveau",
+              })
             )
             .catch((error) => res.status(400).json({ error }));
         }

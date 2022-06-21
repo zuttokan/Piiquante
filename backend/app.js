@@ -1,11 +1,14 @@
+// Express, is a framework for created API
 const express = require("express");
+// MongoDB, is a schema-less NoSQL document database
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-//const sauce = require("./models/sauce");
 const saucesRoutes = require("./routes/sauces");
 const userRoutes = require("./routes/user");
+// Path, gives the path to the file
 const path = require("path");
+// CORS, is a browser security feature that restricts cross-origin HTTP requests which domains access your resources.
 const cors = require("cors");
+// create an express application
 const app = express();
 
 // connexion to mongoDB
@@ -31,8 +34,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(bodyParser.json());
-
+// app.use() allows to assign a middleware to a specific route of the application.
 app.use(express.json());
 app.use(cors());
 

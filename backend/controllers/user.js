@@ -1,8 +1,10 @@
+// brcypt,  is hash function for pasword
 const bcrypt = require("bcrypt");
+// JWT, allows to validate the user authntification
 const jwt = require("jsonwebtoken");
-
 const User = require("../models/user");
 
+// registration of new users
 exports.signup = (req, res, next) => {
   console.log(req.body);
   bcrypt
@@ -20,6 +22,7 @@ exports.signup = (req, res, next) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
+// user identification
 exports.login = (req, res, next) => {
   User.findOne({ email: req.body.email })
     .then((user) => {
@@ -27,6 +30,7 @@ exports.login = (req, res, next) => {
         return res.status(401).json({ error: "Utilisateur non trouvé !" });
       }
       bcrypt
+        //check if a password entered by the user corresponds to a secure hash recorded in the database
         .compare(req.body.password, user.password)
         .then((valid) => {
           if (!valid) {
