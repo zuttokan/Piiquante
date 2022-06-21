@@ -1,3 +1,4 @@
+// call jsonwebtoken for authentication middleware
 const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {

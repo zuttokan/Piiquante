@@ -1,7 +1,10 @@
+// framework for created API
 const express = require("express");
+// create a new router object in your program to handle requests.
 const router = express.Router();
-
+// process for verify the identity of a user
 const auth = require("../middleware/auth");
+// multer, is used for uploading files
 const multer = require("../middleware/multer-config");
 
 const saucesCtrl = require("../controllers/sauces");
