@@ -2,6 +2,7 @@
 const Sauce = require("../models/sauce");
 // fs, for modify the file system, including the functions to delete
 const fs = require("fs");
+const jwt = require("jsonwebtoken");
 
 // Add a sauce
 exports.createSauce = (req, res, next) => {
@@ -15,7 +16,7 @@ exports.createSauce = (req, res, next) => {
   });
   sauce
     .save()
-    .then(() => res.status(201).json({ message: "Objet enregistré !" }))
+    .then(() => res.status(201).json({ message: "registered object !" }))
     .catch((error) => res.status(400).json({ error }));
 };
 
@@ -39,6 +40,7 @@ exports.modifySauce = (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
   const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
   const userId = decodedToken.userId;
+
   const sauceObject = req.file
     ? {
         ...JSON.parse(req.body.sauce),
@@ -55,10 +57,10 @@ exports.modifySauce = (req, res, next) => {
           { _id: req.params.id },
           { ...sauceObject, _id: req.params.id }
         )
-          .then(() => res.status(200).json({ message: "Objet modifié !" }))
+          .then(() => res.status(200).json({ message: "Modify object !" }))
           .catch((error) => res.status(400).json({ error }));
       } else {
-        res.status(401).json({ message: "Opération non autorisée !" });
+        res.status(403).json({ message: "Forbidden request !" });
       }
     })
     .catch((error) => res.status(500).json({ error }));
@@ -69,17 +71,18 @@ exports.deleteSauce = (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
   const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
   const userId = decodedToken.userId;
+
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
       if (sauce.userId == userId) {
         const filename = sauce.imageUrl.split("/images/")[1];
         fs.unlink(`images/${filename}`, () => {
           Sauce.deleteOne({ _id: req.params.id })
-            .then(() => res.status(200).json({ message: "Objet supprimé !" }))
+            .then(() => res.status(200).json({ message: "deleted object !" }))
             .catch((error) => res.status(400).json({ error }));
         });
       } else {
-        res.status(401).json({ message: "Opération non autorisée !" });
+        res.status(403).json({ message: "Forbidden request !" });
       }
     })
     .catch((error) => res.status(500).json({ error }));
